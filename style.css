@@ -1,0 +1,122 @@
+:root {
+    --canvas_size: 400px;
+}
+
+* {
+    color: #aaa;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+ul {
+    padding-left: 0px;
+}
+
+ul li {
+    padding-left: 0px;
+    margin:0px 0px 0px 12px;
+}
+
+
+body {
+
+    background-image: linear-gradient(to right,
+     rgb(36, 36, 36), 
+     rgb(27, 27, 27), 
+     rgb(21, 21, 21), 
+     rgb(21, 21, 21),
+     rgb(27, 27, 27), 
+     rgb(36, 36, 36));
+    background-color: rgb(36, 36, 36);
+    background-position: center;
+    background-size: 1200px;
+    background-repeat: repeat-y;
+}
+
+.warning {
+    background-color: #c520038c;
+    padding: 10px;
+    margin: auto auto;
+    border: 2px dashed #d5c702;
+    border-radius: 12px;
+    text-align: center;
+    width: fit-content;
+}
+
+code * {
+    font-family: monospace;
+    font-size: 1em;
+}
+
+code {
+    font-family: monospace;
+    font-size: 1em;
+}
+
+.project {
+    /* border: 1px solid #ccc; */
+    margin: 30px;
+}
+
+/* hr {
+    margin: 20px;
+} */
+
+.projectContents, .fragment_project, .framebuffer_project {
+    margin: 4px;
+    display: flex;
+    flex-basis: content;
+    width: 100%;
+}
+
+.projectDescription {
+    width: 100%;
+    text-align: center;
+}
+
+
+canvas {
+    height: var(--canvas_size);
+    width: var(--canvas_size);
+    /* border: 1px solid white; */
+    border-radius: 12px;
+    cursor: crosshair;
+}
+
+.pixel-precise {
+    border-radius: 0px;
+    image-rendering: pixelated;
+}
+
+.showcase {
+    padding: 12px;
+    border: 1px solid #aaaa;
+    margin: 5px;
+    border-radius: 12px;
+    width: min-content;
+    height: min-content;
+}
+
+
+.shader-code {
+    padding: 15px;
+    /* border: 1px solid #aaaa; */
+    margin: 5px;
+    flex-grow: 2;
+    overflow-y: scroll;
+    order: 1;
+    clip-path: padding-box;
+    mask-image: 
+        linear-gradient(#0000 0px, #ffff 32px, #ffff calc(100% - 32px), #0000 100%);
+}
+
+.slider-1 {
+    width: 100%;
+    margin: 10px 0px 0px 0px;
+}
+
+.reveal pre code, .hljs {
+    background-color: #0000 !important;
+    margin: 0px !important;
+    padding: 0px !important;
+}

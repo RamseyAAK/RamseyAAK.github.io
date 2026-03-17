@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Ramsey's Code Portfolio </title>
+        <link rel="icon" type="image/x-icon" href="ProfileSymbol.png">
+        <link rel="stylesheet" href="style.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+        <script src="webgl.js" type="module"></script>
+        <!-- <script src="test.js" type="module"></script> -->
+        <script src="framebuffer.js" type="module"></script>
+
+        <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/atom-one-dark.min.css">
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
+
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/haskell.min.js"></script>
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/python.min.js"></script>
+        <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/glsl.min.js"></script>
+    </head>
+
+
+
+    <body> 
+        <h1> Ramsey's Code Portfolio</h1>
+        <div class="warning"> 
+            <p>
+                <h3> <img src="./under-construction.png" width="30" height="30">
+                    Under Construction
+                    <img src="./under-construction.png" width="30" height="30">
+                </h3>
+                This project is very early in its development.
+            </p>
+        </div>
+        <p>
+            I want to see and feel and touch the code.
+        </p>
+        <p> 
+            I want to share what I create.
+        </p>
+        <!--
+        <p>
+            I want to build a garden of interactable concepts.
+        </p>
+        -->
+        <p>
+            That is the goal of this project.
+        </p>
+             All of the code here is written by me, using resources as indicated.
+        </p>
+        <p>
+            Right now it is just a few fragment shaders. You can interact with the shaders by using the slider, or clicking and dragging on some of the images.
+        </p>
+
+    <!--
+        Planned:
+        - Page features
+            - Build page based on files in repository
+                - Either one big json with all data, or manifest of filenames
+                - Github action to run python to do that ^
+            - Organization based on tags
+            - URL Parameters to adjust layout
+            - navigation / preview sidebar
+        - Code displays
+            - vs and fs
+            - more interacrtions
+                - buttons
+                - click
+                - touch
+            - other languages
+                - haskell
+                - js
+                - rust
+                - c++
+                - Uiua
+                - python
+                - others
+            - compute shaders
+                - switch to WebGpu?
+    -->
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                This shader calculates wether each pixel (x,y)
+                represents the Roundest (most similar) Factors of x * y.
+                Colored pixels are points that were just confirmed
+                on the current loop of the algorithm, green for roundest
+                and red for not. Grey is unconfirmed, white is
+                confirmed true and black is confirmed false.
+            </p>
+            <div class="projectContents" id="RoundFactors2.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                This shader shows a serial version of the Round Factor algorithm
+                    meant for regular CPU execution working to find the roundest factor
+                    of the pixel's x * y. When the roundest factors are found, the pixel
+                    is colored with red representing the differance between that pixel's
+                    position and the position of the roundest factor pair,
+                    and green and blue represent the absolure position of the roundest factor pair.
+            </p>
+            <div class="projectContents" id="RoundFactors1.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code fs-codehighlight-element = "code" class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+        
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                I made this to explore some of the patterns I saw in the round factor shaders.
+            </p>
+            <div class="projectContents" id="divisability.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                This was my first attempt at
+                <a href="https://www.youtube.com/watch?v=Ff0jJyyiVyw&list=PLGmrMu-IwbgtMxMiV3x4IrHPlPmg7FD-P" target="_blank">
+                    raymarching</a>.
+            </p>
+            <div class="projectContents" id="raymarching.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- <div class="project">
+            <p class="projectDescription">Example shader poject.</p>
+            <div class="projectContents" id="raymarch_fractal.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr> -->
+        
+        <div class="project">
+            <p class="projectDescription">
+                The colors found on a bubble or oil film or on the surface
+                 of oxidized metal are caused by
+                <a href="https://courses.lumenlearning.com/suny-physics/chapter/27-7-thin-film-interference/" target="_blank">
+                    thin film interference</a>.
+                 This shader simulates the colors produced by different
+                 thickness of the thin film. What ends up happening is that
+                 red green and blue have their brightnesses set to a sine
+                 wave with the wavelength based on their real wavelengths.
+            </p>
+            <div class="projectContents" id="ThinFilmColor.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                I was messing around and I just think this one looks neat.
+            </p>
+            <div class="projectContents" id="i_like_math.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                <a href="https://www.karlsims.com/rd.html" target="_blank"> Reaction Diffusion</a>. 
+                My go-to for testing buffers. It looks a litle eye searing because the view is of the raw 
+                buffer values. Eventually I'll seperate and display the shaders for computing and viewing.
+            </p>
+            <div class="framebuffer_project" id="reaction_diffusion.frag">
+                <div class="showcase">
+                    <canvas width="400" height="400"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                <a href="https://www.youtube.com/watch?v=VmrIDyYiJBA" target="_blank">Hexagonal tiling</a>.
+                I have plans for this.
+            </p>
+            <div class="projectContents" id="hexagons.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                Work in progress.
+            </p>
+            <div class="projectContents" id="graduated_radius.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                For CS23 : Discrete Mathematics.
+            </p>
+            <div class="projectContents" id="venn_diagram.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                For CS23 : Discrete Mathematics.
+            </p>
+            <div class="projectContents" id="truth_values.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="32" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                For CS23 : Discrete Mathematics.
+            </p>
+            <div class="projectContents" id="truth_table.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="400" height="400"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+    </body>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                Example shader poject.
+            </p>
+            <div class="projectContents" id="default.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+    </body>
+
+ </html>
