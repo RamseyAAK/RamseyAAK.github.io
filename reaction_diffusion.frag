@@ -75,7 +75,7 @@ void main() {
     col.z = 0.0;
   }
 
-  col.y += clamp(0.0, 1.0, near(distance(mod(vec2(2 * iDrag) / iResolution.y, 1.0), uv), 0.03, 100.0) / 50.0);
+  col.y += clamp(0.0, 1.0, near(distance(mod(vec2(iDrag) / iResolution.y, 1.0), uv), 0.03, 100.0) / 50.0);
   
   finalColor = vec4(col.x, col.y, col.z, smoothstep(0.0, 0.2, col.y));
 }

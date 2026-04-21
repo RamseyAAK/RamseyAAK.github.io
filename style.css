@@ -62,7 +62,7 @@ code {
     margin: 20px;
 } */
 
-.projectContents, .fragment_project, .framebuffer_project {
+.projectContents, .fragment_project, .framebuffer_project, .webgpu_test, .tree_vis, .beans {
     margin: 4px;
     display: flex;
     flex-basis: content;

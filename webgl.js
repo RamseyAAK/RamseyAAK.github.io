@@ -3,7 +3,7 @@ import { getFileAsString, createSimpleProgram,
          mouseInput }
   from './shader_setup.js';
 
-document.querySelectorAll('.projectContents').forEach(x => { assignShader(x, x.id)});
+document.querySelectorAll('.fragment_project').forEach(x => { assignShader(x, x.id)});
 
 async function assignShader(div, shaderFile) {
 

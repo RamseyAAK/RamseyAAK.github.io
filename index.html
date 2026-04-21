@@ -7,8 +7,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <script src="webgl.js" type="module"></script>
-        <!-- <script src="test.js" type="module"></script> -->
         <script src="framebuffer.js" type="module"></script>
+        <script src="webgpu_test.js" type="module"></script>
+        <script src="webgpu_beans.js" type="module"></script>
+        <script src="webgpu_tree_vis.js" type="module"></script>
 
         <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/atom-one-dark.min.css">
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
@@ -16,6 +18,7 @@
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/haskell.min.js"></script>
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/python.min.js"></script>
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/languages/glsl.min.js"></script>
+        <script src="./sources/wgsl.min.js"></script>
     </head>
 
 
@@ -88,7 +91,7 @@
                 and red for not. Grey is unconfirmed, white is
                 confirmed true and black is confirmed false.
             </p>
-            <div class="projectContents" id="RoundFactors2.frag">
+            <div class="fragment_project" id="RoundFactors2.frag">
                 <div class="showcase">
                     <canvas class="pixel-precise" width="800" height="800"></canvas>
                 </div>
@@ -100,7 +103,7 @@
 
         <hr>
 
-        <div class="project">
+        <!-- <div class="project">
             <p class="projectDescription">
                 This shader shows a serial version of the Round Factor algorithm
                     meant for regular CPU execution working to find the roundest factor
@@ -109,7 +112,7 @@
                     position and the position of the roundest factor pair,
                     and green and blue represent the absolure position of the roundest factor pair.
             </p>
-            <div class="projectContents" id="RoundFactors1.frag">
+            <div class="fragment_project" id="RoundFactors1.frag">
                 <div class="showcase">
                     <canvas class="pixel-precise" width="800" height="800"></canvas>
                 </div>
@@ -125,7 +128,7 @@
             <p class="projectDescription">
                 I made this to explore some of the patterns I saw in the round factor shaders.
             </p>
-            <div class="projectContents" id="divisability.frag">
+            <div class="fragment_project" id="divisability.frag">
                 <div class="showcase">
                     <canvas class="pixel-precise" width="800" height="800"></canvas>
                 </div>
@@ -135,7 +138,7 @@
             </div>
         </div>
 
-        <hr>
+        <hr> -->
 
         <div class="project">
             <p class="projectDescription">
@@ -143,7 +146,7 @@
                 <a href="https://www.youtube.com/watch?v=Ff0jJyyiVyw&list=PLGmrMu-IwbgtMxMiV3x4IrHPlPmg7FD-P" target="_blank">
                     raymarching</a>.
             </p>
-            <div class="projectContents" id="raymarching.frag">
+            <div class="fragment_project" id="raymarching.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -157,7 +160,7 @@
 
         <!-- <div class="project">
             <p class="projectDescription">Example shader poject.</p>
-            <div class="projectContents" id="raymarch_fractal.frag">
+            <div class="fragment_project" id="raymarch_fractal.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -180,7 +183,7 @@
                  red green and blue have their brightnesses set to a sine
                  wave with the wavelength based on their real wavelengths.
             </p>
-            <div class="projectContents" id="ThinFilmColor.frag">
+            <div class="fragment_project" id="ThinFilmColor.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -196,7 +199,7 @@
             <p class="projectDescription">
                 I was messing around and I just think this one looks neat.
             </p>
-            <div class="projectContents" id="i_like_math.frag">
+            <div class="fragment_project" id="i_like_math.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -231,7 +234,7 @@
                 <a href="https://www.youtube.com/watch?v=VmrIDyYiJBA" target="_blank">Hexagonal tiling</a>.
                 I have plans for this.
             </p>
-            <div class="projectContents" id="hexagons.frag">
+            <div class="fragment_project" id="hexagons.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -243,11 +246,11 @@
 
         <hr>
 
-        <div class="project">
+        <!-- <div class="project">
             <p class="projectDescription">
                 Work in progress.
             </p>
-            <div class="projectContents" id="graduated_radius.frag">
+            <div class="fragment_project" id="graduated_radius.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -257,13 +260,13 @@
             </div>
         </div>
 
-        <hr>
+        <hr> -->
 
         <div class="project">
             <p class="projectDescription">
                 For CS23 : Discrete Mathematics. <br> A venn diagram showing A ∩ (B ⊕ C)
             </p>
-            <div class="projectContents" id="venn_diagram.frag">
+            <div class="fragment_project" id="venn_diagram.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
@@ -281,7 +284,7 @@
                 bit values for the 32 bit int of pixel y value. <br> Scroll locally by dragging,
                 scroll globally with the slider.
             </p>
-            <div class="projectContents" id="truth_values.frag">
+            <div class="fragment_project" id="truth_values.frag">
                 <div class="showcase">
                     <canvas class="pixel-precise" width="32" height="800"></canvas>
                 </div>
@@ -298,7 +301,7 @@
                 For CS23 : Discrete Mathematics. <br> A truth table showing values for 
                 A, B, and C on the left, and the truth value of A AND (B XOR C).
             </p>
-            <div class="projectContents" id="truth_table.frag">
+            <div class="fragment_project" id="truth_table.frag">
                 <div class="showcase">
                     <canvas class="pixel-precise" width="400" height="400"></canvas>
                 </div>
@@ -317,7 +320,7 @@
                 Use the slider to scroll through the opperations in order: AND(x, y), OR(x, y), IfThen(x, y), IFF(x, y), XOR(x, y),
                  AND(x, NOT(x)), OR(x, NOT(x)), IFF(x, NOT(x)), XOR(x, NOT(x)). 
             </p>
-            <div class="projectContents" id="fuzzy_logic.frag">
+            <div class="fragment_project" id="fuzzy_logic.frag">
                 <div class="showcase">
                     <canvas width="400" height="400"></canvas>
                 </div>
@@ -329,16 +332,65 @@
 
         <hr>
 
-        <!-- <div class="project">
+        <div class="project">
+            <p class="projectDescription">
+                Simple dithering.
+            </p>
+            <div class="fragment_project" id="dither_test.frag">
+                <div class="showcase">
+                    <canvas class="pixel-precise" width="400" height="400"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- <hr>
+
+        <div class="project">
             <p class="projectDescription">
                 Example shader poject.
             </p>
-            <div class="projectContents" id="fuzzy_logic_permutations.frag">
+            <div class="webgpu_test" id="test_gol.wgsl">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-wgsl"></code></pre>
+                </div>
+            </div>
+        </div> -->
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                Colliding particle simulation using Verlet Integration.
+                Test project for learning WGPU and WGSL using <a href="https://codelabs.developers.google.com/your-first-webgpu-app" target="_blank">a google tutorial</a>.
+            </p>
+            <div class="beans" id="beans.wgsl">
                 <div class="showcase">
                     <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
-                    <pre><code class="language-glsl"></code></pre>
+                    <pre><code class="language-wgsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <!-- <div class="project">
+            <p class="projectDescription">
+                For CS23: Tree structure visualizer.
+            </p>
+            <div class="tree_vis" id="tree_viz.wgsl">
+                <div class="showcase">
+                    <canvas width="400" height="400"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-wgsl"></code></pre>
                 </div>
             </div>
         </div>
@@ -349,7 +401,7 @@
             <p class="projectDescription">
                 Example shader poject.
             </p>
-            <div class="projectContents" id="default.frag">
+            <div class="fragment_project" id="default.frag">
                 <div class="showcase">
                     <canvas width="800" height="800"></canvas>
                 </div>
