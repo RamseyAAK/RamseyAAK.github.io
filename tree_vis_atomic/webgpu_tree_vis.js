@@ -38,14 +38,8 @@ async function assignShader(div, shaderFile) {
 
   // Prepare Shaders ------------------------------------------------------------
   const shader = await getFileAsString('./' + shaderFile);
-  const vertexAdvanceShader = await getFileAsString('./updateVertex.wgsl');
-
-  const VAModule = device.createShaderModule({
-    label: "Tree render shader module",
-    code: vertexAdvanceShader
-  });
   const shaderModule = device.createShaderModule({
-    label: "Tree compute shader module",
+    label: "Cell shader",
     code: shader
   });
   //_____________________________________________________________________________
@@ -84,23 +78,23 @@ async function assignShader(div, shaderFile) {
     ]
   });
 
-  const bgLayoutNodesCompute = device.createBindGroupLayout({
-    label: "Compute Node Bind Group Layout",
+  const bgLayoutNodes = device.createBindGroupLayout({
+    label: "Cell State Bind Group Layout",
     entries: [
       { binding: 0,
-        visibility: GPUShaderStage.COMPUTE,
-        buffer: { type: "storage" }
-      }, 
-      { binding: 1,
         visibility: GPUShaderStage.VERTEX | GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE,
         buffer: { type: "read-only-storage" }
+      },
+      { binding: 1,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: { type: "storage" }
       }
     ]
   });
 
   const bgLayoutEdges = device.createBindGroupLayout({
-    label: "Edge Render and Compute Bind Group Layout",
-    entries: [ 
+    label: "Cell State Bind Group Layout",
+    entries: [
       { binding: 0,
         visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
         buffer: { type: "read-only-storage" }
@@ -108,35 +102,14 @@ async function assignShader(div, shaderFile) {
     ]
   });
 
-  const bgLayoutVA = device.createBindGroupLayout({
-    label: "Vertex Advance Bind Group Layout",
-    entries: [
-      { binding: 0,
-        visibility: GPUShaderStage.COMPUTE,
-        buffer: { type: 'uniform' }
-      },
-      { binding: 1,
-        visibility: GPUShaderStage.COMPUTE,
-        buffer: { type: "storage" }
-      },
-      { binding: 2,
-        visibility: GPUShaderStage.COMPUTE,
-        buffer: { type: "storage" }
-      }
-    ]
-  });
-
   // put multiple bind group layouts together
-  const pipelineLayoutCR = device.createPipelineLayout({
-    bindGroupLayouts: [ bgLayoutInit, bgLayoutNodesCompute, bgLayoutEdges ],
-  });
-  const pipelineLayoutVA = device.createPipelineLayout({
-    bindGroupLayouts: [ bgLayoutVA ],
+  const pipelineLayout = device.createPipelineLayout({
+    bindGroupLayouts: [ bgLayoutInit, bgLayoutNodes, bgLayoutEdges ],
   });
 
   const nodePipeline = device.createRenderPipeline({
     label: "Render Nodes pipeline",
-    layout: pipelineLayoutCR,
+    layout: pipelineLayout,
     primitive: {
       topology: 'triangle-list'
     },
@@ -159,10 +132,10 @@ async function assignShader(div, shaderFile) {
   });
 
     const edgePipeline = device.createRenderPipeline({
-    label: "Render Edges pipeline",
-    layout: pipelineLayoutCR,
+    label: "Render Nodes pipeline",
+    layout: pipelineLayout,
     primitive: {
-      topology: 'triangle-strip'
+      topology: 'triangle-list'
     },
     depthStencil: {
         depthWriteEnabled: true,
@@ -182,29 +155,35 @@ async function assignShader(div, shaderFile) {
     }
   });
 
-  const VAPipeline = device.createComputePipeline({
-      label: "Vertex Advance Pipeline",
-      layout: pipelineLayoutVA,
-      compute: {
-        module: VAModule,
-        entryPoint: "advance",
-      }
-    });
+  // Comipute pipeline: one thread per node
+  const nodeCompPipeline = device.createComputePipeline({
+    label: "Simulation pipeline",
+    layout: pipelineLayout,
+    compute: {
+      module: shaderModule,
+      entryPoint: "computeNodes",
+    }
+  });
 
-  function makeComputePipeline(name) {
-    return device.createComputePipeline({
-      label: "Compute pipeline: " + name,
-      layout: pipelineLayoutCR,
-      compute: {
-        module: shaderModule,
-        entryPoint: name,
-      }
-    });
-  }
-  const nodeCompPipeline = makeComputePipeline("nodeConstraints");
-  const edgeCompPipeline = makeComputePipeline("edgeConstriants");
-  // const integratePipeline = makeComputePipeline("integrate");
-  // const consolidatePipeline = makeComputePipeline("consolidate");
+    // Comipute pipeline: one thread per edge
+  const edgeCompPipeline = device.createComputePipeline({
+    label: "Simulation pipeline",
+    layout: pipelineLayout,
+    compute: {
+      module: shaderModule,
+      entryPoint: "computeEdges",
+    }
+  });
+
+    // Comipute pipeline: one thread per node
+  const consolidatePipeline = device.createComputePipeline({
+    label: "Simulation pipeline",
+    layout: pipelineLayout,
+    compute: {
+      module: shaderModule,
+      entryPoint: "consolidate",
+    }
+  });
   //_____________________________________________________________________________
 
   // Depth Texture --------------------------------------------------------------
@@ -259,58 +238,35 @@ async function assignShader(div, shaderFile) {
   //_____________________________________________________________________________
 
   // Create and populate Node storeage buffer ----------------------------------------
-  const bytesPerElement = 4;
-  const elementsPerNode = 5;
-  const bytesPerNode = bytesPerElement * elementsPerNode;
-  const nodesArray = new ArrayBuffer(NUM_PARTICLES * bytesPerNode);
-  const VANodesArray = new Float32Array(NUM_PARTICLES * 2);
-  // Create views to write floats and uints into the same buffer
-  const f32View = new Float32Array(nodesArray);
-  const u32View = new Uint32Array(nodesArray);
-  // populate buffer
+  // each particle is represented by a vec3i(posx, posy, totalweight) where the position
+  // is the sum of several positions and totalweight is the number of positions that were summed
+  const nodesArray = new Int32Array(NUM_PARTICLES * 3);
   for (let i = 0; i < NUM_PARTICLES; ++i) {
-    // Since both views read in 4-byte chunks, our index steps by 3
-    const index = i * elementsPerNode;
-    f32View[index + 0] = (2 * Math.random() - 1) * (1 - PARTICLE_SIZE);
-    f32View[index + 1] = (2 * Math.random() - 1) * (1 - PARTICLE_SIZE);
-    f32View[index + 2] = f32View[index + 0];
-    f32View[index + 3] = f32View[index + 1];
-    u32View[index + 4] = 1;
-
-    VANodesArray[2 * i + 0] = f32View[index + 0];
-    VANodesArray[2 * i + 1] = f32View[index + 1];
+    nodesArray[(3 * i) + 0] = Math.trunc(((2 * Math.random() - 1) * (1 << 26)) * (1 - PARTICLE_SIZE));
+    nodesArray[(3 * i) + 1] = Math.trunc(((2 * Math.random() - 1) * (1 << 26)) * (1 - PARTICLE_SIZE));
+    nodesArray[(3 * i) + 2] = 1;
   }
 
-  const nodeStorage =
+  // Create two storage buffers to hold the Nodes.
+  const nodeStorage = [
     device.createBuffer({
-      label: "Node Buffer",
+      label: "Cell State A",
       size: nodesArray.byteLength,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-    });
-
-  const VANodeStorage =
+    }),
     device.createBuffer({
-      label: "Vertex Advance Node Buffer",
-      size: VANodesArray.byteLength,
+      label: "Cell State B",
+      size: nodesArray.byteLength,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-    });
+    })
+  ];
 
-  device.queue.writeBuffer(nodeStorage, 0, nodesArray);
-  device.queue.writeBuffer(VANodeStorage, 0, VANodesArray);
+  device.queue.writeBuffer(nodeStorage[0], 0, nodesArray);
+  device.queue.writeBuffer(nodeStorage[1], 0, nodesArray);
   //_____________________________________________________________________________
 
   // Create and populate Edge storeage buffer ----------------------------------------
-  // node1, node2, edge group/color
-  const arrayTemplate = [0, 1, 0,
-                         0, 2, 3,
-                         0, 3, 1,
-                         2, 4, 2,
-                         4, 5, 0,
-                         2, 6, 1,
-                         2, 7, 0,
-                         7, 8, 1,
-                         7, 9, 2,
-                         7, 10, 3];
+  const arrayTemplate = [0, 1, 0, 2, 0, 3, 2, 4, 4, 5, 2, 6, 2, 7, 7, 8, 7, 9, 7, 10];
   const edgesArray = new Uint32Array(arrayTemplate);
   // const edgesArray = new Uint32Array(NUM_EDGES * 2);
   // for (let i = 0; i < NUM_EDGES; ++i) {
@@ -341,15 +297,24 @@ async function assignShader(div, shaderFile) {
     ]
   });
 
-    const bgNodes =
+    const bgNodes = [
       device.createBindGroup({
         label: "Node Bind Group A",
         layout: nodePipeline.getBindGroupLayout(1),
         entries: [
-          { binding: 0, resource: { buffer: nodeStorage } },
-          { binding: 1, resource: { buffer: VANodeStorage } }
+          { binding: 0, resource: { buffer: nodeStorage[0] } },
+          { binding: 1, resource: { buffer: nodeStorage[1] } }
         ]
-      });
+      }),
+      device.createBindGroup({
+        label: "Node Bind Group B",
+        layout: nodePipeline.getBindGroupLayout(1),
+        entries: [
+          { binding: 0, resource: { buffer: nodeStorage[1] } },
+          { binding: 1, resource: { buffer: nodeStorage[0] } }
+        ]
+      })
+    ];
 
     const bgEdges = 
       device.createBindGroup({
@@ -359,39 +324,16 @@ async function assignShader(div, shaderFile) {
           { binding: 0, resource: { buffer: edgesStorage } }
         ]
       });
-
-    const bgVA = 
-      device.createBindGroup({
-        label: "Edges Bind Group",
-        layout: VAPipeline.getBindGroupLayout(0),
-        entries: [
-          { binding: 0, resource: { buffer: uNumParticles } },
-          { binding: 1, resource: { buffer: nodeStorage } },
-          { binding: 2, resource: { buffer: VANodeStorage } }
-        ]
-      });
   //_____________________________________________________________________________
-  function compute(encoder, compPipeline, count) {
+
+  function computeNodes(encoder, step) {
     const computePass = encoder.beginComputePass();
 
-    computePass.setPipeline(compPipeline);
+    computePass.setPipeline(nodeCompPipeline);
 
     computePass.setBindGroup(0, bindGroupInit);
-    computePass.setBindGroup(1, bgNodes);
+    computePass.setBindGroup(1, bgNodes[step % 2]);
     computePass.setBindGroup(2, bgEdges);
-
-    const workgroupCount = ((count - 1) / 32) + 1;
-    computePass.dispatchWorkgroups(workgroupCount);
-
-    computePass.end();
-  }
-
-  function advance(encoder) {
-    const computePass = encoder.beginComputePass();
-
-    computePass.setPipeline(VAPipeline);
-
-    computePass.setBindGroup(0, bgVA);
 
     const workgroupCount = ((NUM_PARTICLES - 1) / 32) + 1;
     computePass.dispatchWorkgroups(workgroupCount);
@@ -399,7 +341,37 @@ async function assignShader(div, shaderFile) {
     computePass.end();
   }
 
-  function drawEdges(encoder) {
+  function computeEdges(encoder, step) {
+    const computePass = encoder.beginComputePass();
+
+    computePass.setPipeline(edgeCompPipeline);
+
+    computePass.setBindGroup(0, bindGroupInit);
+    computePass.setBindGroup(1, bgNodes[step % 2]);
+    computePass.setBindGroup(2, bgEdges);
+
+    const workgroupCount = ((NUM_EDGES - 1) / 32) + 1;
+    computePass.dispatchWorkgroups(workgroupCount);
+
+    computePass.end();
+  }
+
+  function consolidate(encoder, step) {
+    const computePass = encoder.beginComputePass();
+
+    computePass.setPipeline(consolidatePipeline);
+
+    computePass.setBindGroup(0, bindGroupInit);
+    computePass.setBindGroup(1, bgNodes[step % 2]);
+    computePass.setBindGroup(2, bgEdges);
+
+    const workgroupCount = ((NUM_PARTICLES - 1) / 32) + 1;
+    computePass.dispatchWorkgroups(workgroupCount);
+
+    computePass.end();
+  }
+
+  function drawEdges(encoder, step) {
     const pass = encoder.beginRenderPass({
       colorAttachments: [{
         view: context.getCurrentTexture().createView(),
@@ -418,13 +390,13 @@ async function assignShader(div, shaderFile) {
     // Draw
     pass.setPipeline(edgePipeline);
     pass.setBindGroup(0, bindGroupInit);
-    pass.setBindGroup(1, bgNodes);
+    pass.setBindGroup(1, bgNodes[step % 2]);
     pass.setBindGroup(2, bgEdges);
-    pass.draw(4, NUM_EDGES);
+    pass.draw(6, NUM_PARTICLES);
     pass.end();
   }
 
-  function drawNodes(encoder) {
+  function drawNodes(encoder, step) {
     const pass = encoder.beginRenderPass({
       colorAttachments: [{
         view: context.getCurrentTexture().createView(),
@@ -443,7 +415,7 @@ async function assignShader(div, shaderFile) {
     // Draw
     pass.setPipeline(nodePipeline);
     pass.setBindGroup(0, bindGroupInit);
-    pass.setBindGroup(1, bgNodes);
+    pass.setBindGroup(1, bgNodes[step % 2]);
     pass.setBindGroup(2, bgEdges);
     pass.draw(3, NUM_PARTICLES);
     pass.end();
@@ -451,16 +423,16 @@ async function assignShader(div, shaderFile) {
 
   // Create and run Draw/calculate loop -----------------------------------------
   const UPDATE_INTERVAL = 0.2 * 100;
+  let step = 0;
 
   function update() {
     const encoder = device.createCommandEncoder();
-    // compute(encoder, integratePipeline, NUM_PARTICLES);   // INTEGRATE
-    compute(encoder, nodeCompPipeline, NUM_PARTICLES);    // NODE
-    compute(encoder, edgeCompPipeline, NUM_EDGES);        // EDGE
-    // compute(encoder, consolidatePipeline, NUM_PARTICLES); // CONSOLIDATE
-    advance(encoder);
-    drawEdges(encoder);
-    drawNodes(encoder);
+    computeNodes(encoder, step);
+    computeEdges(encoder, step);
+    consolidate(encoder, step);
+    step++; // Increment the step count
+    drawEdges(encoder, step);
+    drawNodes(encoder, step);
     // Submit the command buffer
     device.queue.submit([encoder.finish()]);
   }
