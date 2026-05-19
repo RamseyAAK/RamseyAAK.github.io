@@ -406,7 +406,7 @@ async function assignShader(div, shaderFile) {
   }
   
   function mouseReset() {
-    mouseState = 0;
+    mouseState = 0; 
     device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
   }
 
