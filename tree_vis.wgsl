@@ -35,6 +35,8 @@ struct Edge {
 @group(1) @binding(0) var<storage, read_write> computeNodes: array<CNode>;
 @group(1) @binding(1) var<storage> renderNodes: array<vec2f>;
 @group(2) @binding(0) var<storage> edges: array<Edge>;
+@group(3) @binding(0) var<uniform> mousePos: vec2f;
+@group(3) @binding(1) var<uniform> clickState: u32;
 
 fn getNew(i: u32) -> vec2f {
   return renderNodes[i];
@@ -62,14 +64,6 @@ fn accum(i: u32, v: vec2f) {
   computeNodes[i].accum_y += v.y;
   computeNodes[i].count += 1;
 }
-
-// fn consolidate(i: u32) {
-//   var newPos = getAccum(i);
-//   newPos /= f32(computeNodes[i].count);
-//   computeNodes[i].accum_x = newPos.x;
-//   computeNodes[i].accum_y = newPos.y;
-//   computeNodes[i].count = 1;
-// }
 
 //-------------------------------------------------------------------------------
 // VERTEX NODE
@@ -139,12 +133,9 @@ fn light(normal: vec3f, light: vec3f) -> f32 {
 
 @fragment
 fn fragmentMain(in: VertexOutput) -> FragmentOutput {
-  // if (abs(in.uv.x) > 1 || abs(in.uv.y) > 1) {
-  //   discard;
-  // }
   var out: FragmentOutput;
   let sph = sphere_normal(in.uv, 1.0);
-  out.color = vec4f(vec3f(light(sph, normalize(LIGHT_POS - (vec3f(getDisplay(in.id), 0) + (sph * iParticleSize))))), 1);
+  out.color = vec4f(vec3f(light(sph, normalize(vec3f(mousePos.x, mousePos.y, -1) - (vec3f(getDisplay(in.id), 0) + (sph * iParticleSize))))), 1);
   out.depth = 1 + sph.z;
   return out;
 }
@@ -176,7 +167,11 @@ fn nodeConstraints(@builtin(global_invocation_id) id: vec3u) {
     nextPos = avg/count;
 
     // Set
-    setPos(id.x, nextPos);
+    if (((clickState & 1) == 1) && (length(mousePos - getNew(id.x)) < iParticleSize)) {
+      setPos(id.x, mousePos);
+    } else {
+      setPos(id.x, nextPos);
+    }
   }
 }
 //-------------------------------------------------------------------------------

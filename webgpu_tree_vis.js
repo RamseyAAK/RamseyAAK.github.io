@@ -67,19 +67,19 @@ async function assignShader(div, shaderFile) {
     entries: [
       { binding: 0,
         visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
-        buffer: { type: 'uniform' }
+        buffer: { type: "uniform" }
       },
       { binding: 1,
         visibility: GPUShaderStage.FRAGMENT,
-        buffer: { type: 'uniform' }
+        buffer: { type: "uniform" }
       }, 
       { binding: 2,
         visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
-        buffer: { type: 'uniform' }
+        buffer: { type: "uniform" }
       }, 
       { binding: 3,
         visibility: GPUShaderStage.VERTEX | GPUShaderStage.COMPUTE,
-        buffer: { type: 'uniform' }
+        buffer: { type: "uniform" }
       }
     ]
   });
@@ -108,12 +108,26 @@ async function assignShader(div, shaderFile) {
     ]
   });
 
+  const bgLayoutInteraction = device.createBindGroupLayout({
+    label: "Interaction bind group",
+    entries: [
+      { binding: 0,
+        visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.COMPUTE,
+        buffer: { type: "uniform" }
+      },
+      { binding: 1,
+        visibility: GPUShaderStage.COMPUTE,
+        buffer: { type: "uniform" }
+      }
+    ]
+  });
+
   const bgLayoutVA = device.createBindGroupLayout({
     label: "Vertex Advance Bind Group Layout",
     entries: [
       { binding: 0,
         visibility: GPUShaderStage.COMPUTE,
-        buffer: { type: 'uniform' }
+        buffer: { type: "uniform" }
       },
       { binding: 1,
         visibility: GPUShaderStage.COMPUTE,
@@ -128,7 +142,7 @@ async function assignShader(div, shaderFile) {
 
   // put multiple bind group layouts together
   const pipelineLayoutCR = device.createPipelineLayout({
-    bindGroupLayouts: [ bgLayoutInit, bgLayoutNodesCompute, bgLayoutEdges ],
+    bindGroupLayouts: [ bgLayoutInit, bgLayoutNodesCompute, bgLayoutEdges, bgLayoutInteraction ],
   });
   const pipelineLayoutVA = device.createPipelineLayout({
     bindGroupLayouts: [ bgLayoutVA ],
@@ -329,7 +343,89 @@ async function assignShader(div, shaderFile) {
   device.queue.writeBuffer(edgesStorage, 0, edgesArray);
   //_____________________________________________________________________________
 
-  // Bind Groups: ----------------------------------------------------------
+  // Interaction ----------------------------------------------------------------
+  // Mouse position
+  const mousePosTemplate = [0.0, 0.0];
+  const initMousePos = new Float32Array(mousePosTemplate);
+  
+  const mouseStorage = 
+    device.createBuffer({
+      lavel: "Mouse position storage",
+      size: initMousePos.byteLength,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+  device.queue.writeBuffer(mouseStorage, 0, initMousePos);
+
+  // Click state
+  const clickTemplate = [0];
+  const initClick = new Uint32Array(clickTemplate);
+  
+  const clickStorage = 
+    device.createBuffer({
+      lavel: "Mouse position storage",
+      size: initClick.byteLength,
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST
+    });
+
+  device.queue.writeBuffer(clickStorage, 0, initClick);
+
+  function onMouseMove(mouse) {
+    const rect = canvas.getBoundingClientRect();
+    device.queue.writeBuffer(mouseStorage, 0, (new Float32Array([(((mouse.clientX - rect.left) / rect.width) - 0.5) * 2.0, ((1.0 - ((mouse.clientY - rect.top) / rect.height)) - 0.5) * 2.0])));
+  }
+
+  let mouseState = 0;
+
+  function onMouseDown(mouse) {
+    if (!(mouseState & 1) && (mouse.button === 0)) {
+      mouseState += 1;
+      device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
+      console.log("LClick");
+    } else if (!(mouseState & 2) && (mouse.button === 2)) {
+      mouseState += 2;
+      device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
+      console.log("RClick");
+    }
+  }
+
+  function onMouseUp(mouse) {
+    if ((mouseState & 1) && (mouse.button === 0)) {
+      mouseState -= 1;
+      device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
+      console.log("LUnClick");
+    } else if ((mouseState & 2) && (mouse.button === 2)) {
+      mouseState -= 2;
+      device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
+      console.log("RUnClick");
+    }
+  }
+
+  function onRClickDown(mouse) {
+    mouse.preventDefault();
+  }
+  
+  function mouseReset() {
+    mouseState = 0;
+    device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
+  }
+
+  canvas.addEventListener('mouseenter', (_) => {
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('contextmenu', onRClickDown);
+  });
+  canvas.addEventListener('mouseleave', (mouse) => {
+    canvas.removeEventListener('mousemove', onMouseMove);
+    canvas.removeEventListener('mousedown', onMouseDown);
+    canvas.removeEventListener('mouseup', onMouseUp);
+    canvas.removeEventListener('contextmenu', onRClickDown);
+    mouseReset();
+  });
+  //_____________________________________________________________________________
+
+  // Bind Groups: ---------------------------------------------------------------
   const bindGroupInit = device.createBindGroup({
     label: "Initalizing Bind Group",
     layout: nodePipeline.getBindGroupLayout(0),
@@ -360,6 +456,16 @@ async function assignShader(div, shaderFile) {
         ]
       });
 
+    const bgInteraction = 
+      device.createBindGroup({
+        label: "Interaction Bind Group",
+        layout: nodePipeline.getBindGroupLayout(3),
+        entries: [
+          { binding: 0, resource: { buffer: mouseStorage } },
+          { binding: 1, resource: { buffer: clickStorage } }
+        ]
+      });
+
     const bgVA = 
       device.createBindGroup({
         label: "Edges Bind Group",
@@ -379,6 +485,7 @@ async function assignShader(div, shaderFile) {
     computePass.setBindGroup(0, bindGroupInit);
     computePass.setBindGroup(1, bgNodes);
     computePass.setBindGroup(2, bgEdges);
+    computePass.setBindGroup(3, bgInteraction);
 
     const workgroupCount = ((count - 1) / 32) + 1;
     computePass.dispatchWorkgroups(workgroupCount);
@@ -420,6 +527,7 @@ async function assignShader(div, shaderFile) {
     pass.setBindGroup(0, bindGroupInit);
     pass.setBindGroup(1, bgNodes);
     pass.setBindGroup(2, bgEdges);
+    pass.setBindGroup(3, bgInteraction);
     pass.draw(4, NUM_EDGES);
     pass.end();
   }
@@ -445,6 +553,7 @@ async function assignShader(div, shaderFile) {
     pass.setBindGroup(0, bindGroupInit);
     pass.setBindGroup(1, bgNodes);
     pass.setBindGroup(2, bgEdges);
+    pass.setBindGroup(3, bgInteraction);
     pass.draw(3, NUM_PARTICLES);
     pass.end();
   }

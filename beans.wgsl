@@ -19,6 +19,8 @@ struct FragmentOutput {
 @group(0) @binding(2) var<uniform> iParticleSize: f32;
 @group(1) @binding(0) var<storage> newState: array<vec2f>;
 @group(1) @binding(1) var<storage, read_write> oldState: array<vec2f>;
+@group(2) @binding(0) var<uniform> mousePos: vec2f;
+@group(2) @binding(1) var<uniform> clickState: u32;
 
 //-------------------------------------------------------------------------------
 
@@ -58,7 +60,7 @@ fn fragmentMain(in: VertexOutput) -> FragmentOutput {
   // }
   var out: FragmentOutput;
   let sph = sphere_normal(in.uv, 1.0);
-  out.color = vec4f(vec3f(light(sph, normalize(LIGHT_POS - (vec3f(newState[in.id], 0) + (sph * iParticleSize))))), 1);
+  out.color = vec4f(vec3f(light(sph, normalize(vec3(mousePos, -0.5) - (vec3f(newState[in.id], 0) + (sph * iParticleSize))))), 1);
   out.depth = 1 + sph.z;
   return out;
 }
@@ -70,7 +72,7 @@ fn computeMain(@builtin(global_invocation_id) id: vec3u) {
   var nextPos = newState[id.x];
 
   // Gravity
-  nextPos += -0.0001 * normalize(nextPos);
+  nextPos += -0.0001 * nextPos;
 
   // Boundries
   nextPos = clamp(nextPos, vec2f(-1 + iParticleSize), vec2f(1 - iParticleSize));
@@ -93,5 +95,9 @@ fn computeMain(@builtin(global_invocation_id) id: vec3u) {
   nextPos = avg/count;
 
   // Set
-  oldState[id.x] = nextPos;
+  if (((clickState & 1) == 1) && (length(mousePos - newState[id.x]) < iParticleSize)) {
+    oldState[id.x] = mousePos;
+  } else {
+    oldState[id.x] = nextPos;
+  }
 }

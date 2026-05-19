@@ -11,6 +11,7 @@
         <script src="webgpu_test.js" type="module"></script>
         <script src="webgpu_beans.js" type="module"></script>
         <script src="webgpu_tree_vis.js" type="module"></script>
+        <script src="edges_convolution.js" type="module"></script>
 
         <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/atom-one-dark.min.css">
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
@@ -383,7 +384,7 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23: Tree structure visualizer. Reload the page to see the physics settle. <br>
+                For CS23: Tree structure visualizer. Reload the page to see the physics settle, or left click and drag on nodes to move them. <br>
                 The code for this one is a bit unwieldy and needs refactoring. I'm also thinking about making this interactive 
                 so that you can build a custom tree.
             </p>
@@ -398,6 +399,21 @@
         </div>
 
         <hr>
+<!-- 
+        <div class="project">
+            <p class="projectDescription">
+            </p>
+            <div class="convolution_project" id="edges.frag">
+                <div class="showcase">
+                    <canvas width="800" height="800"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr> -->
 
         <div class="project">
             <p class="projectDescription">
