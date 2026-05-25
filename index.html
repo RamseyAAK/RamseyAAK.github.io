@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title> Ramsey's Code Portfolio </title>
+        <title> Ramsey's Code Exhibit </title>
         <link rel="icon" type="image/x-icon" href="ProfileSymbol.png">
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +11,7 @@
         <script src="webgpu_test.js" type="module"></script>
         <script src="webgpu_beans.js" type="module"></script>
         <script src="webgpu_tree_vis.js" type="module"></script>
-        <!-- <script src="edges_convolution.js" type="module"></script> -->
+        <script src="edges_convolution.js" type="module"></script>
 
         <link rel="stylesheet" href="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/styles/atom-one-dark.min.css">
         <script src="https://unpkg.com/@highlightjs/cdn-assets@11.11.1/highlight.min.js"></script>
@@ -25,7 +25,7 @@
 
 
     <body> 
-        <h1> Ramsey's Code Portfolio</h1>
+        <h1> Ramsey's Code Exhibit</h1>
         <div class="warning"> 
             <p>
                 <h3> <img src="./under-construction.png" width="30" height="30">
@@ -90,11 +90,12 @@
                 Colored pixels are points that were just confirmed
                 on the current loop of the algorithm, green for roundest
                 and red for not. Grey is unconfirmed, white is
-                confirmed true and black is confirmed false.
+                confirmed true and black is confirmed false. 
+                <br> Slider changes the number of iterations.
             </p>
             <div class="fragment_project" id="RoundFactors2.frag">
                 <div class="showcase">
-                    <canvas class="pixel-precise" width="800" height="800"></canvas>
+                    <canvas class="pixel-precise" width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -145,11 +146,11 @@
             <p class="projectDescription">
                 This was my first attempt at
                 <a href="https://www.youtube.com/watch?v=Ff0jJyyiVyw&list=PLGmrMu-IwbgtMxMiV3x4IrHPlPmg7FD-P" target="_blank">
-                    raymarching</a>.
+                    raymarching</a>. Click-drag and slider to move the camera.
             </p>
             <div class="fragment_project" id="raymarching.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -183,10 +184,11 @@
                  thickness of the thin film. What ends up happening is that
                  red green and blue have their brightnesses set to a sine
                  wave with the wavelength based on their real wavelengths.
+                 <br> Click-drag to scroll, and slider to change scale.
             </p>
             <div class="fragment_project" id="ThinFilmColor.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -198,11 +200,12 @@
 
         <div class="project">
             <p class="projectDescription">
-                I was messing around and I just think this one looks neat.
+                I was messing around and I just think this one looks neat. 
+                <br> Click-drag to scroll, and slider to change scale.
             </p>
             <div class="fragment_project" id="i_like_math.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -214,9 +217,12 @@
 
         <div class="project">
             <p class="projectDescription">
-                <a href="https://www.karlsims.com/rd.html" target="_blank"> Reaction Diffusion</a>. 
-                My go-to for testing buffers. It looks a litle eye searing because the view is of the raw 
-                buffer values. Eventually I'll seperate and display the shaders for computing and viewing.
+                <a href="https://www.karlsims.com/rd.html" target="_blank"> Reaction Diffusion</a>.
+                Patterns emerge when a steady amount of reactive 'chemical' is fed in while another 'chemical' 
+                consumes it to make more of itself. 
+                <br> Click-drag to interact. 
+                <!-- My go-to for testing buffers. It looks a litle eye searing because the view is of the raw 
+                buffer values. Eventually I'll seperate and display the shaders for computing and viewing. -->
             </p>
             <div class="framebuffer_project" id="reaction_diffusion.frag">
                 <div class="showcase">
@@ -237,7 +243,7 @@
             </p>
             <div class="fragment_project" id="hexagons.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -265,11 +271,11 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23 : Discrete Mathematics. <br> A venn diagram showing A ∩ (B ⊕ C)
+                For CS23: Discrete Mathematics. <br> A venn diagram showing A ∩ (B ⊕ C)
             </p>
             <div class="fragment_project" id="venn_diagram.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -281,13 +287,13 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23 : Discrete Mathematics. <br> A 'truth table' showing the 
-                bit values for the 32 bit int of pixel y value. <br> Scroll locally by dragging,
+                For CS23: Discrete Mathematics. <br> A 'truth table' showing the 
+                bit values for the pixel y value, a 32bit integer. <br> Scroll locally by click-dragging,
                 scroll globally with the slider.
             </p>
             <div class="fragment_project" id="truth_values.frag">
                 <div class="showcase">
-                    <canvas class="pixel-precise" width="32" height="800"></canvas>
+                    <canvas class="pixel-precise" width="32" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -299,7 +305,7 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23 : Discrete Mathematics. <br> A truth table showing values for 
+                For CS23: Discrete Mathematics. <br> A truth table showing values for 
                 A, B, and C on the left, and the truth value of A AND (B XOR C).
             </p>
             <div class="fragment_project" id="truth_table.frag">
@@ -317,7 +323,8 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23 : Discrete Mathematics. <br> <a href="https://en.wikipedia.org/wiki/Fuzzy_logic#Fuzzy_logic_operators"> Fuzzy logic</a>.
+                For CS23 : Discrete Mathematics. <br> <a href="https://en.wikipedia.org/wiki/Fuzzy_logic#Fuzzy_logic_operators"> Fuzzy logic</a>,
+                where truth values between 0 and 1 are valid.
                 Use the slider to scroll through the opperations in order: AND(x, y), OR(x, y), IfThen(x, y), IFF(x, y), XOR(x, y),
                  AND(x, NOT(x)), OR(x, NOT(x)), IFF(x, NOT(x)), XOR(x, NOT(x)). 
             </p>
@@ -369,6 +376,7 @@
             <p class="projectDescription">
                 Colliding particle simulation using Verlet Integration.
                 Test project for learning WebGPU and WGSL using <a href="https://codelabs.developers.google.com/your-first-webgpu-app" target="_blank">a google tutorial</a>.
+                Click-drag to move particles.
             </p>
             <div class="beans" id="beans.wgsl">
                 <div class="showcase">
@@ -384,9 +392,12 @@
 
         <div class="project">
             <p class="projectDescription">
-                For CS23: Tree structure visualizer. Reload the page to see the physics settle, or left click and drag on nodes to move them. <br>
+                For CS23: Tree structure visualizer. 
+                <br>
+                Reload the page to see the physics settle, or left click and drag on nodes to move them. 
+                <!-- <br>
                 The code for this one is a bit unwieldy and needs refactoring. I'm also thinking about making this interactive 
-                so that you can build a custom tree.
+                so that you can build a custom tree. -->
             </p>
             <div class="tree_vis" id="tree_vis.wgsl">
                 <div class="showcase">
@@ -399,13 +410,16 @@
         </div>
 
         <hr>
-<!-- 
+
         <div class="project">
             <p class="projectDescription">
+                For CS21: Data Strucures and Algorithms
+                <br>
+                Edge detection as a test convolution.
             </p>
             <div class="convolution_project" id="edges.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -413,7 +427,7 @@
             </div>
         </div>
 
-        <hr> -->
+        <hr>
 
         <div class="project">
             <p class="projectDescription">

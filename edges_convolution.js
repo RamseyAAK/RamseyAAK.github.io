@@ -3,7 +3,7 @@ import { getFileAsString, createSimpleProgram,
          mouseInput, createFrameBuffer}
   from './shader_setup.js';
 
-document.querySelectorAll('.framebuffer_project').forEach(x => { assignShader(x, x.id)});
+document.querySelectorAll('.convolution_project').forEach(x => { assignShader(x, x.id)});
 
 async function assignShader(div, shaderFile) {
 
@@ -22,6 +22,10 @@ async function assignShader(div, shaderFile) {
   const ext = gl.getExtension("EXT_color_buffer_float");
   if (!ext) {
     console.error("Your device does not support rendering to float textures!");
+  }
+  const extTextureFloatLinear = gl.getExtension('OES_texture_float_linear');
+  if (!extTextureFloatLinear) {
+    console.warn("No float linear filtering support. You MUST use gl.NEAREST.");
   }
 
   gl.clearColor(0.0, 0.0, 1.0, 1.0);
@@ -51,8 +55,8 @@ async function assignShader(div, shaderFile) {
   //_____________________________________________________________________________
   
   // Create Frame Buffers: ------------------------------------------------------
-  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height);
-  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height);
+  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height, './edges_test.jpg');
+  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height, './edges_test.jpg');
   //_____________________________________________________________________________
 
   // Configure Calculate and Draw Functions: ---------------------------------------------------
@@ -105,12 +109,14 @@ async function assignShader(div, shaderFile) {
 function calculate(gl, pCalc, fbA, fbB, textureA, textureB) {
   // Draw from buffer to buffer
   gl.useProgram(pCalc);
-  // Assign buffer B as input
-  gl.bindTexture(gl.TEXTURE_2D, textureB)
-  // Assign buffer A as output
-  gl.bindFramebuffer(gl.FRAMEBUFFER, fbA);
-  // Draw
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+  // // Assign buffer B as input
+  // gl.bindTexture(gl.TEXTURE_2D, textureB)
+  // // Assign buffer A as output
+  // gl.bindFramebuffer(gl.FRAMEBUFFER, fbA);
+  // // Draw
+  // gl.drawArrays(gl.TRIANGLES, 0, 3);
+
   // Assign buffer A as input
   gl.bindTexture(gl.TEXTURE_2D, textureA);
   // Assign buffer B as output

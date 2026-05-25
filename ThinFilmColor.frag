@@ -21,7 +21,7 @@ float tfi_A(float wavelength, float phase_diff) {
 }
 
 void main() {
-  float depth = ((gl_FragCoord.x - float(iDrag.x * 2)) / iResolution.x) * iSlider * 3000.0;
+  float depth = ((gl_FragCoord.x - float(iDrag.x)) / iResolution.x) * iSlider * 3000.0;
   finalColor = vec4(
     tfi_A(RED  , 2.0 * depth)
   , tfi_A(GREEN, 2.0 * depth)

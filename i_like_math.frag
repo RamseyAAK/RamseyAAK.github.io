@@ -19,7 +19,7 @@ float near(float a, float b, float sharpness) {
 }
 
 void main() {
-  vec2 uv = (gl_FragCoord.xy - vec2(iDrag * 2)) / iResolution.y;
+  vec2 uv = (gl_FragCoord.xy - vec2(iDrag)) / iResolution.y;
   uv -= 0.5;
   uv *= 2.0;
   uv *= SCALE;
