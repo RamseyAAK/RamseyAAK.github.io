@@ -72,9 +72,33 @@ export function sliderInput(gl, program, document, showcase, draw, shouldDraw = 
   })
 }
 
-export function timeInput(gl, program, draw, shouldDraw = true) {
+export function detectVisibility(vis, element) {
+  // Detect visibility within window
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      vis.intersecting = entry.isIntersecting
+    });
+  }, { threshold: 0.1 });
+  observer.observe(element);
+
+  // Detect OS window focus and tab visability
+  window.addEventListener('focus', () => {
+    vis.focus = true;
+  });
+  window.addEventListener('blur', () => {
+    vis.focus = false;
+  });
+}
+
+export function timeInput(gl, program, canvas, draw, shouldDraw = true) {
+  let vis = { intersecting: canvas.isIntersecting
+            , focus: document.hasFocus()
+            , visible() { return this.intersecting && this.focus; }
+  };
+  detectVisibility(vis, canvas);
   const startTime = new Date();
   function drawInTime() {
+  if (!vis.visible()) { return; }
     gl.useProgram(program);
     gl.uniform1f(gl.getUniformLocation(program, 'iTime'), (Date.now() - startTime) / 1000.0);
     if (shouldDraw) {

@@ -86,7 +86,7 @@ async function assignShader(div, shaderFile) {
 
   // Time input: ----------------------------------------------------------------
   if (fsSource.includes('iTime')) {
-    timeInput(gl, pCalculate, drawAndCalc);
+    timeInput(gl, pCalculate, canvas, drawAndCalc);
   }
   //_____________________________________________________________________________
 

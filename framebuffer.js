@@ -52,8 +52,8 @@ async function assignShader(div, shaderFile) {
   //_____________________________________________________________________________
   
   // Create Frame Buffers: ------------------------------------------------------
-  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height);
-  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height);
+  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height, 'rd_start.png');
+  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height, 'rd_start.png');
   //_____________________________________________________________________________
 
   // Configure Calculate and Draw Functions: ---------------------------------------------------
@@ -87,10 +87,9 @@ async function assignShader(div, shaderFile) {
   }
   //_____________________________________________________________________________
 
-
   // Time input: ----------------------------------------------------------------
   if (fsSource.includes('iTime')) {
-    timeInput(gl, pCalculate, drawAndCalc);
+    timeInput(gl, pCalculate, canvas, drawAndCalc);
   }
   //_____________________________________________________________________________
 

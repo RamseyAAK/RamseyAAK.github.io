@@ -1,7 +1,7 @@
 // with help from:
 // https://codelabs.developers.goocontexte.com/your-first-webgpu-app
 
-import { getFileAsString }
+import { getFileAsString, detectVisibility }
   from './shader_setup.js';
 
 document.querySelectorAll('.beans').forEach(x => { assignShader(x, x.id)});
@@ -244,11 +244,11 @@ async function assignShader(div, shaderFile) {
     if (!(mouseState & 1) && (mouse.button === 0)) {
       mouseState += 1;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("LClick");
+      // console.log("LClick");
     } else if (!(mouseState & 2) && (mouse.button === 2)) {
       mouseState += 2;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("RClick");
+      // console.log("RClick");
     }
   }
 
@@ -256,11 +256,11 @@ async function assignShader(div, shaderFile) {
     if ((mouseState & 1) && (mouse.button === 0)) {
       mouseState -= 1;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("LUnClick");
+      // console.log("LUnClick");
     } else if ((mouseState & 2) && (mouse.button === 2)) {
       mouseState -= 2;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("RUnClick");
+      // console.log("RUnClick");
     }
   }
 
@@ -332,7 +332,13 @@ async function assignShader(div, shaderFile) {
   const UPDATE_INTERVAL = 0.2 * 100;
   let step = 0;
 
+  let vis = { intersecting: canvas.isIntersecting
+            , focus: document.hasFocus()
+            , visible() { return this.intersecting && this.focus; }
+  };
+  detectVisibility(vis, canvas);
   function updateGrid() {
+    if (!vis.visible()) { return; }
     const encoder = device.createCommandEncoder();
 
     const computePass = encoder.beginComputePass();

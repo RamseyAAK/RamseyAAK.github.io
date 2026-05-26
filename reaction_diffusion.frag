@@ -65,15 +65,15 @@ void main() {
   vec2 uv = gl_FragCoord.xy / iResolution.xy;
   
   vec3 col = vec3(1.0,0.0,0.0);
-  if (iTime < 0.1) {
-    col.z = random(uv);
-  } else if (iTime < 1.0) {
-    col.z = measure(ivec2(gl_FragCoord.xy)).z + (laplacian(ivec2(gl_FragCoord.xy)).z * 0.5);
-    col.y = smoothstep(0.5, 0.6, col.z);
-  } else {
+  // if (iTime < 0.1) {
+  //   col.z = random(uv);
+  // } else if (iTime < 1.0) {
+  //   col.z = measure(ivec2(gl_FragCoord.xy)).z + (laplacian(ivec2(gl_FragCoord.xy)).z * 0.5);
+  //   col.y = smoothstep(0.5, 0.6, col.z);
+  // } else {
     col = vec3(reactionDiffusion(ivec2(gl_FragCoord)), 0.0);
     col.z = 0.0;
-  }
+  // }
 
   col.y += clamp(0.0, 1.0, near(distance(mod(vec2(iClick) / iResolution.y, 1.0), uv), 0.03, 100.0) / 50.0);
   

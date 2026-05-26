@@ -1,7 +1,7 @@
 // with help from:
 // https://codelabs.developers.goocontexte.com/your-first-webgpu-app
 
-import { getFileAsString }
+import { getFileAsString, detectVisibility }
   from './shader_setup.js';
 
 document.querySelectorAll('.tree_vis').forEach(x => { assignShader(x, x.id)});
@@ -557,8 +557,14 @@ async function assignShader(div, shaderFile) {
 
   // Create and run Draw/calculate loop -----------------------------------------
   const UPDATE_INTERVAL = 0.2 * 100;
+  let vis = { intersecting: canvas.isIntersecting
+            , focus: document.hasFocus()
+            , visible() { return this.intersecting && this.focus; }
+  };
+  detectVisibility(vis, canvas);
 
   function update() {
+    if (!vis.visible()) { return; }
     const encoder = device.createCommandEncoder();
     // compute(encoder, integratePipeline, NUM_PARTICLES);   // INTEGRATE
     compute(encoder, nodeCompPipeline, NUM_PARTICLES);    // NODE
