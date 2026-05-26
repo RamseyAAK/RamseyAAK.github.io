@@ -52,10 +52,7 @@ async function assignShader(div, shaderFile) {
   code.textContent = shader;
 
   hljs.highlightElement(code);
-
-  // This needs to happen after any manipulation of the showcase
-  div.querySelector('.shader-code').style.height = showcase.scrollHeight + "px";
-  //_____________________________________________________________________________
+//_____________________________________________________________________________
 
   // Vertex Buffer --------------------------------------------------------------
   const vertices = new Float32Array([

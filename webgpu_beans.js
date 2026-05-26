@@ -49,10 +49,7 @@ async function assignShader(div, shaderFile) {
   code.textContent = shader;
 
   hljs.highlightElement(code);
-
-  // This needs to happen after any manipulation of the showcase
-  div.querySelector('.shader-code').style.height = showcase.scrollHeight + "px";
-  //_____________________________________________________________________________
+//_____________________________________________________________________________
 
   // Create Pipeline ------------------------------------------------------------
   // create a bind group layout that matches the bind group in the shader

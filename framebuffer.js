@@ -91,10 +91,7 @@ async function assignShader(div, shaderFile) {
   code.textContent = fsSource;
 
   hljs.highlightElement(code);
-
-  // This needs to happen after any manipulation of the showcase
-  div.querySelector('.shader-code').style.height = showcase.scrollHeight + "px";
-  //_____________________________________________________________________________
+//_____________________________________________________________________________
 
   // Draw: ----------------------------------------------------------------------
   // Just gotta draw once here so that the shaders start off visible

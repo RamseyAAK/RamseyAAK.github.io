@@ -64,9 +64,13 @@ code {
 
 .projectContents, .fragment_project, .framebuffer_project, .webgpu_test, .tree_vis, .beans, .convolution_project {
     margin: 4px;
-    display: flex;
-    flex-basis: content;
-    width: 100%;
+    /* display: flex; */
+    /* flex-basis: content; */
+    display: grid;
+    position: relative;
+    grid-template-columns: max-content 1fr;
+    max-width: 100%;
+
 }
 
 .projectDescription {
@@ -89,22 +93,30 @@ canvas {
 }
 
 .showcase {
+    grid-column: 1;
+
     padding: 12px;
     border: 1px solid #aaaa;
     margin: 5px;
     border-radius: 12px;
-    width: min-content;
+    width: min-content; 
     height: min-content;
 }
 
 
 .shader-code {
+    grid-column: 2;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
     padding: 15px;
-    /* border: 1px solid #aaaa; */
     margin: 5px;
-    flex-grow: 2;
-    overflow-y: scroll;
-    order: 1;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: auto;
     clip-path: padding-box;
     mask-image: 
         linear-gradient(#0000 0px, #ffff 32px, #ffff calc(100% - 32px), #0000 100%);
