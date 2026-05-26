@@ -91,7 +91,7 @@ export function resolutionInput(gl, program, canvas) {
   gl.uniform2f(gl.getUniformLocation(program, 'iResolution'), canvas.width, canvas.height);
 }
 
-export function mouseInput(gl, program, document, canvas, draw, shouldDraw = true) {
+export function dragInput(gl, program, document, canvas, draw, shouldDraw = true) {
   const dragLog = {
     x: 0,
     y: 0,
@@ -130,86 +130,62 @@ export function mouseInput(gl, program, document, canvas, draw, shouldDraw = tru
   });
 }
 
-// export function createFrameBuffer(gl, width, height, imageSource) {
-//   // Create a texture to render to
-//   const targetTexture = gl.createTexture();
-//   gl.bindTexture(gl.TEXTURE_2D, targetTexture);
+export function clickInput(gl, program, canvas, draw, shouldDraw = true) {
+  function updateMouse(mouse, canvas) {
+    gl.useProgram(program);
+    const rect = canvas.getBoundingClientRect();
+    gl.uniform2i(gl.getUniformLocation(program, 'iClick'), (mouse.clientX - rect.left)
+                                                         , 1.0 - ((mouse.clientY - rect.top)));
+    if (shouldDraw) {
+      draw();
+    }
+  }
+
+  function onMouseMove(mouse) {
+    updateMouse(mouse, canvas);
+  }
+
+  let mouseState = 0;
+
+  function onMouseDown(mouse) {
+    if (!(mouseState & 1) && (mouse.button === 0)) {
+      mouseState += 1;
+      updateMouse(mouse, canvas);
+      canvas.addEventListener('mousemove', onMouseMove);
+    } else if (!(mouseState & 2) && (mouse.button === 2)) {
+      mouseState += 2;
+    }
+  }
+
+  function onMouseUp(mouse) {
+    if ((mouseState & 1) && (mouse.button === 0)) {
+      mouseState -= 1;
+      canvas.removeEventListener('mousemove', onMouseMove);
+    } else if ((mouseState & 2) && (mouse.button === 2)) {
+      mouseState -= 2;
+    }
+  }
+
+  function onRClickDown(mouse) {
+    mouse.preventDefault();
+  }
   
-//   // gl.texStorage2D(gl.TEXTURE_2D, 1, gl.RGBA8, width, height);
-//   gl.texImage2D(
-//     gl.TEXTURE_2D, 
-//     0, 
-//     gl.RGBA32F, // internal format: 32bit float
-//     width, height, 0, 
-//     gl.RGBA, // color format
-//     gl.FLOAT,
-//     null
-//   );
+  function mouseReset() {
+    mouseState = 0; 
+  }
 
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-//   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-  
-//   // Create a framebuffer
-//   const frameBuffer = gl.createFramebuffer();
-//   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
-  
-//   // Attach the texture as the first color attachment
-//   gl.framebufferTexture2D(
-//     gl.FRAMEBUFFER,
-//     gl.COLOR_ATTACHMENT0,
-//     gl.TEXTURE_2D,
-//     targetTexture,
-//     0 // mip level
-//   );
-
-//   if (imageSource != null) {
-//     const image = new Image();
-//     image.onload = function() {
-//       // create canvas to convert image to float values
-//       const canvas2d = document.createElement('canvas');
-//       canvas2d.width = width;
-//       canvas2d.height = height;
-//       const ctx = canvas2d.getContext('2d');
-//       ctx.drawImage(image, 0, 0);
-//       // This is a Uint8ClampedArray
-//       const imgData = ctx.getImageData(0, 0, width, height).data;
-
-//       // Convert the 0-255 byte data into 0.0 - 1.0 float data
-//       const floatData = new Float32Array(imgData.length);
-//       for (let i = 0; i < imgData.length; i++) {
-//         floatData[i] = imgData[i] / 255.0; 
-//       }
-//       // Flip the image's Y axis to match WebGL's coordinate system
-//       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-//       // Upload the image to the texture
-//       gl.texImage2D(
-//         gl.TEXTURE_2D,
-//         0,                 // level
-//         gl.RGBA32F,        // internal format: 32bit float
-//         width, height, 0,  // width, height, border
-//         gl.RGBA,           // source format
-//         gl.FLOAT,          // source type
-//         floatData
-//       );
-//     }
-//     image.onerror = function() {
-//       console.log("Error Loading Image: ", imageSource);
-//     }
-
-//     // Trigger the image download
-//     image.src = imageSource;
-//   }
-  
-//   // Check if the framebuffer is complete
-//   if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
-//     console.error("Framebuffer is incomplete");
-//   }
-
-//   // Unbind the framebuffer when done with setup
-//   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-//   return [targetTexture, frameBuffer];
-// }
+  canvas.addEventListener('mouseenter', (_) => {
+    canvas.addEventListener('mousedown', onMouseDown);
+    canvas.addEventListener('mouseup', onMouseUp);
+    canvas.addEventListener('contextmenu', onRClickDown);
+  });
+  canvas.addEventListener('mouseleave', (mouse) => {
+    canvas.removeEventListener('mousedown', onMouseDown);
+    canvas.removeEventListener('mouseup', onMouseUp);
+    canvas.removeEventListener('contextmenu', onRClickDown);
+    mouseReset();
+  });
+}
 
 export async function createFrameBuffer(gl, width, height, imageSource = null) {
   // Create a texture to render to
@@ -223,7 +199,7 @@ export async function createFrameBuffer(gl, width, height, imageSource = null) {
 
   let textureData = null;
 
-  // 1. Handle image source loading synchronously via Promise BEFORE initializing the texture
+  // Handle image source loading synchronously via Promise BEFORE initializing the texture
   if (imageSource != null) {
     try {
       textureData = await new Promise((resolve, reject) => {
@@ -236,7 +212,7 @@ export async function createFrameBuffer(gl, width, height, imageSource = null) {
           canvas2d.height = height;
           
           const ctx = canvas2d.getContext('2d');
-          ctx.drawImage(image, 0, 0, width, height); // Scale image cleanly to target width/height
+          ctx.drawImage(image, 0, 0, width, height);
           
           const imgData = ctx.getImageData(0, 0, width, height).data;
 
@@ -259,7 +235,7 @@ export async function createFrameBuffer(gl, width, height, imageSource = null) {
     }
   }
 
-  // 2. Now upload either your pristine floatData or null (empty initialization)
+  // upload either floatData or null
   // Ensure the texture is bound right before uploading
   gl.bindTexture(gl.TEXTURE_2D, targetTexture);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -271,10 +247,10 @@ export async function createFrameBuffer(gl, width, height, imageSource = null) {
     width, height, 0, 
     gl.RGBA, 
     gl.FLOAT,
-    textureData // This will safely be either your Float32Array or null
+    textureData
   );
 
-  // 3. Setup and attach Framebuffer
+  // Setup and attach Framebuffer
   const frameBuffer = gl.createFramebuffer();
   gl.bindFramebuffer(gl.FRAMEBUFFER, frameBuffer);
   

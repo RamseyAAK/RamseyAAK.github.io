@@ -1,6 +1,6 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput,
-         mouseInput }
+         dragInput }
   from './shader_setup.js';
 
 document.querySelectorAll('.fragment_project').forEach(x => { assignShader(x, x.id)});
@@ -53,9 +53,9 @@ async function assignShader(div, shaderFile) {
   }
   //_____________________________________________________________________________
 
-  // Click / Drag input: --------------------------------------------------------
+  // Drag input: --------------------------------------------------------
   if (fsSource.includes('iDrag')) {
-    mouseInput(gl, program, document, canvas, draw);
+    dragInput(gl, program, document, canvas, draw);
   }
   //_____________________________________________________________________________
 

@@ -378,11 +378,11 @@ async function assignShader(div, shaderFile) {
     if (!(mouseState & 1) && (mouse.button === 0)) {
       mouseState += 1;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("LClick");
+      // console.log("LClick");
     } else if (!(mouseState & 2) && (mouse.button === 2)) {
       mouseState += 2;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("RClick");
+      // console.log("RClick");
     }
   }
 
@@ -390,11 +390,11 @@ async function assignShader(div, shaderFile) {
     if ((mouseState & 1) && (mouse.button === 0)) {
       mouseState -= 1;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("LUnClick");
+      // console.log("LUnClick");
     } else if ((mouseState & 2) && (mouse.button === 2)) {
       mouseState -= 2;
       device.queue.writeBuffer(clickStorage, 0, new Uint32Array([mouseState]));
-      console.log("RUnClick");
+      // console.log("RUnClick");
     }
   }
 

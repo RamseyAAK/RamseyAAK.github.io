@@ -3,7 +3,7 @@
 
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput, 
-         mouseInput}
+         dragInput}
   from './shader_setup.js';
 
 document.querySelectorAll('.webgpu_test').forEach(x => { assignShader(x, x.id)});

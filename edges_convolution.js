@@ -1,6 +1,6 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput, 
-         mouseInput, createFrameBuffer}
+         dragInput, createFrameBuffer}
   from './shader_setup.js';
 
 document.querySelectorAll('.convolution_project').forEach(x => { assignShader(x, x.id)});
@@ -78,7 +78,7 @@ async function assignShader(div, shaderFile) {
   }
   //_____________________________________________________________________________
 
-  // Click / Drag input: --------------------------------------------------------
+  // Drag input: --------------------------------------------------------
   if (fsSource.includes('iDrag')) {
     mouseInput(gl, pCalculate, document, canvas, drawAndCalc, false);
   }
@@ -95,7 +95,7 @@ async function assignShader(div, shaderFile) {
   code.textContent = fsSource;
 
   hljs.highlightElement(code);
-//_____________________________________________________________________________
+  //_____________________________________________________________________________
 
   // Draw: ----------------------------------------------------------------------
   // Just gotta draw once here so that the shaders start off visible

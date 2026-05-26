@@ -1,6 +1,7 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput, 
-         mouseInput, createFrameBuffer}
+         dragInput, createFrameBuffer,
+         clickInput}
   from './shader_setup.js';
 
 document.querySelectorAll('.framebuffer_project').forEach(x => { assignShader(x, x.id)});
@@ -74,11 +75,18 @@ async function assignShader(div, shaderFile) {
   }
   //_____________________________________________________________________________
 
-  // Click / Drag input: --------------------------------------------------------
+  // Drag input: --------------------------------------------------------
   if (fsSource.includes('iDrag')) {
-    mouseInput(gl, pCalculate, document, canvas, drawAndCalc, false);
+    dragInput(gl, pCalculate, document, canvas, drawAndCalc, false);
   }
   //_____________________________________________________________________________
+
+  // Click input: --------------------------------------------------------
+  if (fsSource.includes('iClick')) {
+    clickInput(gl, pCalculate, canvas, drawAndCalc, false);
+  }
+  //_____________________________________________________________________________
+
 
   // Time input: ----------------------------------------------------------------
   if (fsSource.includes('iTime')) {
