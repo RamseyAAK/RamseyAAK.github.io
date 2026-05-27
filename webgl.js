@@ -1,6 +1,6 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput,
-         dragInput }
+         dragInput, setupCanvas }
   from './shader_setup.js';
 
 document.querySelectorAll('.fragment_project').forEach(x => { assignShader(x, x.id)});
@@ -17,6 +17,8 @@ async function assignShader(div, shaderFile) {
       "Unable to initialize WebGL. Your browser or machine may not support it."
     );
   }
+
+  setupCanvas(gl, canvas);
 
   gl.clearColor(0.0, 0.0, 1.0, 1.0);
   // gl.enable(gl.DEPTH_TEST); 

@@ -133,13 +133,15 @@ export function dragInput(gl, program, document, canvas, draw, shouldDraw = true
     }
   }
   const rect = canvas.getBoundingClientRect();
+
+  const dpr = window.devicePixelRatio || 1;
   
   function onDrag(drag) {
     const x = drag.clientX - rect.left;
     const y = rect.top - drag.clientY;
     dragLog.dragTo(x,y);
     gl.useProgram(program);
-    gl.uniform2i(gl.getUniformLocation(program, 'iDrag'), dragLog.x, dragLog.y);
+    gl.uniform2i(gl.getUniformLocation(program, 'iDrag'), dpr * dragLog.x, dpr * dragLog.y);
     if (shouldDraw) {
       draw(gl);
     }
@@ -155,11 +157,12 @@ export function dragInput(gl, program, document, canvas, draw, shouldDraw = true
 }
 
 export function clickInput(gl, program, canvas, draw, shouldDraw = true) {
+  const dpr = window.devicePixelRatio || 1;
   function updateMouse(mouse, canvas) {
     gl.useProgram(program);
     const rect = canvas.getBoundingClientRect();
-    gl.uniform2i(gl.getUniformLocation(program, 'iClick'), (mouse.clientX - rect.left)
-                                                         , 1.0 - ((mouse.clientY - rect.top)));
+    gl.uniform2i(gl.getUniformLocation(program, 'iClick'), dpr * (mouse.clientX - rect.left)
+                                                         , dpr * (1.0 - ((mouse.clientY - rect.top))));
     if (shouldDraw) {
       draw();
     }
@@ -295,4 +298,16 @@ export async function createFrameBuffer(gl, width, height, imageSource = null) {
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 
   return [targetTexture, frameBuffer];
+}
+
+export function setupCanvas(gl, canvas) {
+    // // Get the device pixel ratio
+    // const dpr = window.devicePixelRatio || 1;
+
+    // // Scale rendering size based on set rendering size and dpr
+    // canvas.width = canvas.width * dpr;
+    // canvas.height = canvas.height * dpr;
+
+    // Scale the context
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 }

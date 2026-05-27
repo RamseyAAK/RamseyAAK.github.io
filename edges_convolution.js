@@ -1,6 +1,6 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput, 
-         dragInput, createFrameBuffer}
+         dragInput, createFrameBuffer, setupCanvas}
   from './shader_setup.js';
 
 document.querySelectorAll('.convolution_project').forEach(x => { assignShader(x, x.id)});
@@ -17,6 +17,8 @@ async function assignShader(div, shaderFile) {
       "Unable to initialize WebGL. Your browser or machine may not support it."
     );
   }
+
+  setupCanvas(gl, canvas);
 
   // enable float textures
   const ext = gl.getExtension("EXT_color_buffer_float");
@@ -88,6 +90,43 @@ async function assignShader(div, shaderFile) {
   if (fsSource.includes('iTime')) {
     timeInput(gl, pCalculate, canvas, drawAndCalc);
   }
+  //_____________________________________________________________________________
+
+  // Custom Radio button input --------------------------------------------------
+  gl.useProgram(pCalculate);
+  gl.uniform1ui(gl.getUniformLocation(pCalculate, 'iSelection'), 1);
+
+  const radio_buttons = document.createElement('div');
+  radio_buttons.setAttribute('class', 'radio_container');
+  showcase.appendChild(radio_buttons);
+
+  function addButton(value, text, select = false) {
+    const label = document.createElement('label');
+    label.setAttribute('class', 'radio_selection');
+    label.textContent = text;
+    radio_buttons.appendChild(label);
+
+    const button = document.createElement('input');
+    button.setAttribute('type', 'radio');
+    button.setAttribute('name', 'output_type');
+    button.setAttribute('value', value);
+    button.setAttribute('id', text);
+    if (select) {
+      button.setAttribute('checked', 'checked');
+    }
+    label.appendChild(button);
+  }
+  addButton(0, "Original");
+  addButton(1, "Edges", true);
+  addButton(2, "Difference");
+
+  radio_buttons.addEventListener('change', (event) => {
+    if (event.target.type === 'radio') {
+      gl.useProgram(pCalculate);
+      gl.uniform1ui(gl.getUniformLocation(pCalculate, 'iSelection'), event.target.value);
+      drawAndCalc(gl);
+    }
+  });
   //_____________________________________________________________________________
 
   // Shape code Display: --------------------------------------------------------

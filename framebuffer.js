@@ -1,7 +1,7 @@
 import { getFileAsString, createSimpleProgram,
          sliderInput, timeInput, resolutionInput, 
          dragInput, createFrameBuffer,
-         clickInput}
+         clickInput, setupCanvas}
   from './shader_setup.js';
 
 document.querySelectorAll('.framebuffer_project').forEach(x => { assignShader(x, x.id)});
@@ -18,6 +18,8 @@ async function assignShader(div, shaderFile) {
       "Unable to initialize WebGL. Your browser or machine may not support it."
     );
   }
+
+  setupCanvas(gl, canvas);
 
   // enable float textures
   const ext = gl.getExtension("EXT_color_buffer_float");

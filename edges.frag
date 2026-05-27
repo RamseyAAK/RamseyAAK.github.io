@@ -2,6 +2,7 @@
 precision lowp float;
 
 uniform vec2 iResolution;
+uniform uint iSelection;
 uniform sampler2D buff;
 
 layout(location=0) out vec4 finalColor;
@@ -23,14 +24,14 @@ const mat3 laplacian = mat3(
 );
 
 const mat3 v_edge = mat3(
-  0.15, 0.0, 0.15,
-  0.2, -1.0, 0.2,
-  0.15, 0.0, 0.15
+  0.15, -0.1, 0.15,
+  0.2, -0.8, 0.2,
+  0.15, -0.1, 0.15
 );
 
 const mat3 h_edge = mat3(
   0.15, 0.2, 0.15,
-  0.0, -1.0, 0.0,
+  -0.1, -0.8, -0.1,
   0.15, 0.2, 0.15
 );
 
@@ -51,9 +52,15 @@ float greyscale(vec4 color) {
 }
 
 void main() {
-  float v = abs(greyscale(convolute(ivec2(gl_FragCoord), v_edge)));
-  float h = abs(greyscale(convolute(ivec2(gl_FragCoord), h_edge)));
-  float c = abs(greyscale(convolute(ivec2(gl_FragCoord), laplacian)));
-  finalColor = 3.0 * vec4(v, h, c, 1.0);
-  // finalColor = vec4(vec3(0.5) + (3.0 * convolute(ivec2(gl_FragCoord), laplacian).xyz), 1.0);
+  if (iSelection == 0u) {
+    finalColor = measure(ivec2(gl_FragCoord));
+  } else if (iSelection == 1u) {
+    float v = abs(greyscale(convolute(ivec2(gl_FragCoord), v_edge)));
+    float h = abs(greyscale(convolute(ivec2(gl_FragCoord), h_edge)));
+    float c = abs(greyscale(convolute(ivec2(gl_FragCoord), laplacian)));
+    finalColor = 3.0 * vec4(v, h, c, 1.0);
+  }
+  else if (iSelection == 2u) {
+    finalColor = vec4(vec3(0.5) + (3.0 * convolute(ivec2(gl_FragCoord), laplacian).xyz), 1.0);
+  }
 }

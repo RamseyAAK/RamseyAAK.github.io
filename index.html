@@ -6,9 +6,10 @@
         <link rel="stylesheet" href="style.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+        <script src="setup_canvas.js" type="module"></script>
         <script src="webgl.js" type="module"></script>
         <script src="framebuffer.js" type="module"></script>
-        <script src="webgpu_test.js" type="module"></script>
+        <!-- <script src="webgpu_test.js" type="module"></script> -->
         <script src="webgpu_beans.js" type="module"></script>
         <script src="webgpu_tree_vis.js" type="module"></script>
         <script src="edges_convolution.js" type="module"></script>
@@ -325,6 +326,7 @@
             <p class="projectDescription">
                 For CS23 : Discrete Mathematics. <br> <a href="https://en.wikipedia.org/wiki/Fuzzy_logic#Fuzzy_logic_operators"> Fuzzy logic</a>,
                 where truth values between 0 and 1 are valid.
+                <br>
                 Use the slider to scroll through the opperations in order: AND(x, y), OR(x, y), IfThen(x, y), IFF(x, y), XOR(x, y),
                  AND(x, NOT(x)), OR(x, NOT(x)), IFF(x, NOT(x)), XOR(x, NOT(x)). 
             </p>
@@ -435,7 +437,7 @@
             </p>
             <div class="fragment_project" id="default.frag">
                 <div class="showcase">
-                    <canvas width="800" height="800"></canvas>
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
