@@ -4,14 +4,14 @@ import { getFileAsString, createSimpleProgram,
          clickInput, setupCanvas}
   from './shader_setup.js';
 
-document.querySelectorAll('.framebuffer_project').forEach(x => { assignShader(x, x.id)});
+document.querySelectorAll('.framebuffer_project').forEach(x => { assignShader(x)});
 
-async function assignShader(div, shaderFile) {
+async function assignShader(project) {
 
   // Iinitalize -----------------------------------------------------------------
-  const canvas = div.querySelector('canvas');
+  const canvas = project.querySelector('canvas');
   const gl = canvas.getContext("webgl2", { premultipliedAlpha: false} );
-  const showcase = div.querySelector('.showcase');
+  const showcase = project.querySelector('.showcase');
 
   if (gl === null) {
     alert(
@@ -47,20 +47,24 @@ async function assignShader(div, shaderFile) {
     }
   `;
 
-  const fsSource = await getFileAsString('./' + shaderFile);
+  const fsSource = await getFileAsString(project.dataset.frag);
 
   const pDisplay = createSimpleProgram(gl, vsSource, fsDisplay);
   const pCalculate = createSimpleProgram(gl, vsSource, fsSource);
   //_____________________________________________________________________________
   
   // Create Frame Buffers: ------------------------------------------------------
-  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height, 'rd_start.png');
-  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height, 'rd_start.png');
+  const bufferInit = project.dataset.start;
+  const [textureA, fbA] = await createFrameBuffer(gl, canvas.width, canvas.height, bufferInit);
+  const [textureB, fbB] = await createFrameBuffer(gl, canvas.width, canvas.height, bufferInit);
   //_____________________________________________________________________________
 
   // Configure Calculate and Draw Functions: ---------------------------------------------------
+  const ITERATIONS = 3;
   function drawAndCalc(gl) {
-    calculate(gl, pCalculate, fbA, fbB, textureA, textureB);
+    for (let i = 0; i < ITERATIONS; ++i) {
+      calculate(gl, pCalculate, fbA, fbB, textureA, textureB);
+    }
     draw(gl, pDisplay, textureB);
   }
   //_____________________________________________________________________________
@@ -96,7 +100,7 @@ async function assignShader(div, shaderFile) {
   //_____________________________________________________________________________
 
   // Shape code Display: --------------------------------------------------------
-  let code = div.querySelector('code')
+  let code = project.querySelector('code')
   code.textContent = fsSource;
 
   hljs.highlightElement(code);
