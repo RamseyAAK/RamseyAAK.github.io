@@ -3,7 +3,8 @@ precision lowp float;
 
 uniform vec2 iResolution;
 uniform float iTime;
-uniform ivec2 iClick;
+uniform ivec2 iMouse;
+uniform uint iClick;
 uniform sampler2D buff;
 
 layout(location=0) out vec4 finalColor;
@@ -75,7 +76,9 @@ void main() {
     col.z = 0.0;
   // }
 
-  col.y += clamp(0.0, 1.0, near(distance(mod(vec2(iClick) / iResolution.y, 1.0), uv), 0.03, 100.0) / 50.0);
+  if ((iClick & 1u) == 1u) {
+    col.y += clamp(0.0, 1.0, near(distance(mod(vec2(iMouse) / iResolution.y, 1.0), uv), 0.03, 100.0) / 50.0);
+  }
   
   finalColor = vec4(col.x, col.y, col.z, smoothstep(0.0, 0.2, col.y));
 }

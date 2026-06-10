@@ -87,11 +87,6 @@ canvas {
     grid-column: 1;
 }
 
-.pixel-precise {
-    border-radius: 0px;
-    image-rendering: pixelated;
-}
-
 .showcase {
     grid-column: 1;
 
@@ -102,11 +97,19 @@ canvas {
     padding: 12px;
     border: 1px solid #aaaa;
     margin: 5px;
-    border-radius: 12px;
+    border-radius: 24px;
     width: min-content; 
     height: min-content;
 }
 
+.pixel-precise {
+    border-radius: 12px;
+}
+
+.pixel-precise canvas {
+    border-radius: 0px;
+    image-rendering: pixelated;
+}
 
 .shader-code {
     grid-column: 2;
@@ -146,6 +149,14 @@ canvas {
 
 .radio_selection {
     /* margin: 10px 10px 10px 10px; */
+}
+
+.showcase_button {
+    grid-row: 3;
+    grid-column: 1;
+
+    width: min-content;
+    height: min-content;
 }
 
 .reveal pre code, .hljs {

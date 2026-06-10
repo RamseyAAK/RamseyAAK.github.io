@@ -95,8 +95,8 @@
                 <br> Slider changes the number of iterations.
             </p>
             <div class="fragment_project" id="RoundFactors2.frag">
-                <div class="showcase">
-                    <canvas class="pixel-precise" width="400" height="400"></canvas>
+                <div class="showcase pixel-precise">
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -293,8 +293,8 @@
                 scroll globally with the slider.
             </p>
             <div class="fragment_project" id="truth_values.frag">
-                <div class="showcase">
-                    <canvas class="pixel-precise" width="32" height="400"></canvas>
+                <div class="showcase pixel-precise">
+                    <canvas width="32" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -310,8 +310,8 @@
                 A, B, and C on the left, and the truth value of A AND (B XOR C).
             </p>
             <div class="fragment_project" id="truth_table.frag">
-                <div class="showcase">
-                    <canvas class="pixel-precise" width="400" height="400"></canvas>
+                <div class="showcase pixel-precise">
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -347,8 +347,8 @@
                 Simple dithering.
             </p>
             <div class="fragment_project" id="dither_test.frag">
-                <div class="showcase">
-                    <canvas class="pixel-precise" width="400" height="400"></canvas>
+                <div class="showcase pixel-precise">
+                    <canvas width="400" height="400"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>
@@ -420,8 +420,32 @@
                 Edge detection as a test convolution.
             </p>
             <div class="convolution_project" id="edges.frag">
-                <div class="showcase">
+                <div class="showcase pixel-precise">
                     <canvas width="400" height="400"></canvas>
+                </div>
+                <div class="shader-code"> 
+                    <pre><code class="language-glsl"></code></pre>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="project">
+            <p class="projectDescription">
+                2D vibration simulation inspired by <a href="https://www.youtube.com/watch?v=aKePF7TDbV0" target="_blank">this video</a> by Artem Yashin, and <a href="https://www.youtube.com/watch?v=geSDcollRos" target="_blank">this video</a> by Steve Mould.
+                <br>
+                Each pixel behaves like a weight connected to its neighbors by a spring, allowing values/vibrations to propagate.
+                <br>
+                Also, the pixels in the simulation are hexagonally arranged, meaning each has 6 neighbors of equal distance.
+                <br>
+                Green is upward displacement, Red is downward, and blue is increased weight of those pixels.
+                <br>
+                Left click to pull up on the value of a region, Right click to increase the weight of a region, and press the button to reverse the direction of the vibrations.
+            </p>
+            <div class="framebuffer_project" data-frag="hex_vibes.frag" data-view="hex_vibes_view.frag" data-button="reverse_vibes.frag">
+                <div class="showcase">
+                    <canvas width="400" height="462"></canvas>
                 </div>
                 <div class="shader-code"> 
                     <pre><code class="language-glsl"></code></pre>

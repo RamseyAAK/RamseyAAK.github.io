@@ -1,4 +1,5 @@
 export async function getFileAsString(filepath) {
+  if (!(filepath)) { return null; }
   return fetch(filepath).then(r=>r.text());
 }
 
@@ -156,13 +157,16 @@ export function dragInput(gl, program, document, canvas, draw, shouldDraw = true
   });
 }
 
-export function clickInput(gl, program, canvas, draw, shouldDraw = true) {
+export function mouseInput(gl, program, canvas, draw, shouldDraw = true) {
   const dpr = window.devicePixelRatio || 1;
+  let mouseState = 0;
+
   function updateMouse(mouse, canvas) {
     gl.useProgram(program);
     const rect = canvas.getBoundingClientRect();
-    gl.uniform2i(gl.getUniformLocation(program, 'iClick'), dpr * (mouse.clientX - rect.left)
+    gl.uniform2i(gl.getUniformLocation(program, 'iMouse'), dpr * (mouse.clientX - rect.left)
                                                          , dpr * (1.0 - ((mouse.clientY - rect.top))));
+    gl.uniform1ui(gl.getUniformLocation(program, 'iClick'), mouseState);
     if (shouldDraw) {
       draw();
     }
@@ -172,16 +176,15 @@ export function clickInput(gl, program, canvas, draw, shouldDraw = true) {
     updateMouse(mouse, canvas);
   }
 
-  let mouseState = 0;
-
   function onMouseDown(mouse) {
     if (!(mouseState & 1) && (mouse.button === 0)) {
       mouseState += 1;
-      updateMouse(mouse, canvas);
       canvas.addEventListener('mousemove', onMouseMove);
     } else if (!(mouseState & 2) && (mouse.button === 2)) {
       mouseState += 2;
+      canvas.addEventListener('mousemove', onMouseMove);
     }
+    updateMouse(mouse, canvas);
   }
 
   function onMouseUp(mouse) {
@@ -190,7 +193,9 @@ export function clickInput(gl, program, canvas, draw, shouldDraw = true) {
       canvas.removeEventListener('mousemove', onMouseMove);
     } else if ((mouseState & 2) && (mouse.button === 2)) {
       mouseState -= 2;
+      canvas.removeEventListener('mousemove', onMouseMove);
     }
+    updateMouse(mouse, canvas);
   }
 
   function onRClickDown(mouse) {
